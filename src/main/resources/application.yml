@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  thymeleaf:
+  cache: false
+
+  jpa:
+    show-sql: true
+    properties:
+      format_sql: true
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    url: jdbc:mysql://tevlorab.czyyyseqkazy.eu-north-1.rds.amazonaws.com:3306/thevlorabeauty
+    username: tevlorab
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: tevlorab1

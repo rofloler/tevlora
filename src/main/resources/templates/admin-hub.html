@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>Te Vlora Beauty</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,600,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="css/aos.css">
+
+    <link rel="stylesheet" href="css/ionicons.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="css/jquery.timepicker.css">
+
+
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">Te Vlora Beauty</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+                aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="oi oi-menu"></span> Menu
+        </button>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a href="/index" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="/register" class="nav-link">Register</a></li>
+                <li class="nav-item active" sec:authorize="hasRole('ADMIN')"><a href="/admin-hub" class="nav-link">Admin-Hub</a></li>
+                <!-- User Info/Login Box -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <div th:if="${#authorization.expr('isAuthenticated()')}">
+                            <!-- User is logged in -->
+                            Welcome back, <span th:text="${#authentication.name}">User</span>!
+                            <a href="/logout" class="dropdown-item">Logout</a>
+                        </div>
+                        <div th:unless="${#authorization.expr('isAuthenticated()')}">
+                            <!-- User is not logged in - Show Login Form Here -->
+                            <form th:action="@{/login}" method="post" class="px-4 py-3">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Username" name="username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Sign in</button>
+                            </form>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/register">New around here? Sign up</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- END nav -->
+
+<section class="ftco-section contact-section">
+
+    <div th:each="person : ${persons}">
+        <div class="container mt-5">
+            <div class="row block-9">
+                <div class="col-md-4 contact-info ftco-animate">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <h2 class="h4">Person Details</h2>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Name: '+${person.name}">Name</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Last Name: '+${person.lastName}">Last Name</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Age: '+${person.age}">Age</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-6 ftco-animate">
+                    <form th:action="@{/api/persons/{id}(id=${person.id})}" method="post" class="contact-form">
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="hidden" th:value="${person.id}" name="id" class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" th:value="${person.name}" name="name" class="form-control" placeholder="Name"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" th:value="${person.lastName}" name="lastName" class="form-control" placeholder="Last Name"/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="number" th:value="${person.age}" name="age" class="form-control" placeholder="Age"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Update" class="btn btn-primary py-3 px-5">
+                        </div>
+                    </form>
+                    <form th:action="@{/api/persons/delete/{id}(id=${person.id})}" method="post">
+                        <button class="btn btn-danger py-3 px-5" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row block-9">
+            <div class="col-md-4 contact-info ftco-animate">
+                <form th:action="@{/api/persons}" th:object="${newPerson}" method="post" class="contact-form">
+                    <h2 class="h4 mb-4">Add New Person</h2>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{name}" class="form-control" placeholder="Name"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{lastName}" class="form-control" placeholder="Last Name"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="number" th:field="*{age}" class="form-control" placeholder="Age"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add Person" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <section class="ftco-partner bg-light">
+        <div class="container">
+            <div class="row partner justify-content-center">
+                <div class="col-md-10">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:each="product : ${products}">
+        <div class="container mt-5">
+            <div class="row block-9">
+                <div class="col-md-4 contact-info ftco-animate">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <h2 class="h4">Product Details</h2>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Name: '+${product.name}">Name</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Type: '+${product.type}">Type</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Description: '+${product.description}">Description</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Price: '+${product.price}">Price</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-6 ftco-animate">
+                    <form th:action="@{/api/products/{id}(id=${product.id})}" method="post" class="contact-form">
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="hidden" th:value="${product.id}" name="id" class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" th:value="${product.name}" name="name" class="form-control" placeholder="Name"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" th:value="${product.type}" name="type" class="form-control" placeholder="Type"/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="text" th:value="${product.description}" name="description" class="form-control" placeholder="Description"/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="number" th:value="${product.price}" name="price" class="form-control" placeholder="Price"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Update" class="btn btn-primary py-3 px-5">
+                        </div>
+                    </form>
+                    <form th:action="@{/api/products/delete/{id}(id=${product.id})}" method="post">
+                        <button class="btn btn-danger py-3 px-5" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row block-9">
+            <div class="col-md-4 contact-info ftco-animate">
+                <form th:action="@{/api/products}" th:object="${newProduct}" method="post" class="contact-form">
+                    <h2 class="h4 mb-4">Add New Product</h2>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{name}" class="form-control" placeholder="Name"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{type}" class="form-control" placeholder="Type"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{description}" class="form-control" placeholder="Description"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="number" th:field="*{price}" class="form-control" placeholder="Price"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add Product" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <section class="ftco-partner bg-light">
+        <div class="container">
+            <div class="row partner justify-content-center">
+                <div class="col-md-10">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:each="appointment : ${appointments}">
+        <div class="container mt-5">
+            <div class="row block-9">
+                <div class="col-md-4 contact-info ftco-animate">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <h2 class="h4">Appointment Details</h2>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Person ID: '+${appointment.personId}">Person ID</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Start: '+${appointment.startDateTime}">Start Time</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'End: '+${appointment.endDateTime}">End Time</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Product ID: '+${appointment.productId}">Product ID</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-6 ftco-animate">
+                    <form th:action="@{/api/appointments/{id}(id=${appointment.id})}" method="post" class="contact-form">
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="hidden" th:value="${appointment.id}" name="id" class="form-control"/>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="text" th:value="${appointment.personId}" name="personId" class="form-control" placeholder="Person ID"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="datetime-local" th:value="${appointment.startDateTime}" name="startDateTime" class="form-control" placeholder="Start Time"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="datetime-local" th:value="${appointment.endDateTime}" name="endDateTime" class="form-control" placeholder="End Time"/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="text" th:value="${appointment.productId}" name="productId" class="form-control" placeholder="Product ID"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Update" class="btn btn-primary py-3 px-5">
+                        </div>
+                    </form>
+                    <form th:action="@{/api/appointments/delete/{id}(id=${appointment.id})}" method="post">
+                        <button class="btn btn-danger py-3 px-5" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row block-9">
+            <div class="col-md-4 contact-info ftco-animate">
+                <form th:action="@{/api/appointments}" th:object="${newAppointment}" method="post" class="contact-form">
+                    <h2 class="h4 mb-4">Add New Appointment</h2>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{personId}" class="form-control" placeholder="Person ID"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="datetime-local" th:field="*{startDateTime}" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="datetime-local" th:field="*{endDateTime}" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="text" th:field="*{productId}" class="form-control" placeholder="Product ID"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add Appointment" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <section class="ftco-partner bg-light">
+        <div class="container">
+            <div class="row partner justify-content-center">
+                <div class="col-md-10">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:each="openingHours : ${openingHours}">
+        <div class="container mt-5">
+            <div class="row block-9">
+                <div class="col-md-4 contact-info ftco-animate">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <h2 class="h4">Opening Hours</h2>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Day of Week: '+${openingHours.dayOfWeek}">Day of Week</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Day of Month: '+${openingHours.dayOfMonth}">Day of Month</span></p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Morning Open: '+${openingHours.openTimeAm}">Opening Time Morning</span>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span th:text="'Morning Close: '+${openingHours.closeTimeAm}">Closing Time Morning</span>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span
+                                    th:text="'Afternoon Open: '+${openingHours.openTimePm}">Opening Time Afternoon</span>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <p><span
+                                    th:text="'Afternoon Close: '+${openingHours.closeTimePm}">Closing Time Afternoon</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-6 ftco-animate">
+                    <form th:action="@{/api/openingHours/{id}(id=${openingHours.id})}" method="post"
+                          class="contact-form">
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="hidden" th:value="${openingHours.id}" name="id" class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" th:value="${openingHours.dayOfWeek}" name="dayOfWeek"
+                                           class="form-control" placeholder="Day of Week"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" th:value="${openingHours.dayOfMonth}" name="dayOfMonth"
+                                           class="form-control" placeholder="Day of Month"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="time" th:value="${openingHours.openTimeAm}" name="openTimeAm"
+                                           class="form-control" placeholder="Opening Time Morning"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="time" th:value="${openingHours.closeTimeAm}" name="closeTimeAm"
+                                           class="form-control" placeholder="Closing Time Morning"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="time" th:value="${openingHours.openTimePm}" name="openTimePm"
+                                           class="form-control" placeholder="Opening Time Afternoon"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="time" th:value="${openingHours.closeTimePm}" name="closeTimePm"
+                                           class="form-control" placeholder="Closing Time Afternoon"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Update" class="btn btn-primary py-3 px-5">
+                        </div>
+                    </form>
+                    <form th:action="@{/api/openingHours/delete/{id}(id=${openingHours.id})}" method="post">
+                        <button class="btn btn-danger py-3 px-5" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row block-9">
+            <div class="col-md-4 contact-info ftco-animate">
+                <form th:action="@{/api/openingHours}" th:object="${newOpeningHour}" method="post" class="contact-form">
+                    <h2 class="h4 mb-4">Add New Opening Hours</h2>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{dayOfWeek}" class="form-control" placeholder="Day of Week"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="text" th:field="*{dayOfMonth}" class="form-control" placeholder="Day of Month"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="time" th:field="*{openTimeAm}" class="form-control" placeholder="Opening Time Morning"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="time" th:field="*{closeTimeAm}" class="form-control" placeholder="Closing Time Morning"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="time" th:field="*{openTimePm}" class="form-control" placeholder="Opening Time Afternoon"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <input type="time" th:field="*{closeTimePm}" class="form-control" placeholder="Closing Time Afternoon"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add Opening Hours" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <section class="ftco-partner bg-light">
+        <div class="container">
+            <div class="row partner justify-content-center">
+                <div class="col-md-10">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</section>
+
+<footer class="ftco-footer ftco-section img">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <div class="ftco-footer-widget mb-4">
+                    <h2 class="ftco-heading-2">About Us</h2>
+                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there
+                        live the blind texts.</p>
+                    <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                        <li class="ftco-animate"><a href="https://www.facebook.com/tevlorabeauty/"><span
+                                class="icon-facebook"></span></a></li>
+                        <li class="ftco-animate"><a href="https://www.instagram.com/tevlorabeauty/?hl=en"><span
+                                class="icon-instagram"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="ftco-footer-widget mb-3">
+                    <h2 class="ftco-heading-2">Have a Questions?</h2>
+                    <div class="block-23 mb-3">
+                        <ul>
+                            <li><span class="icon icon-map-marker"></span><span class="text"> Te Vlora Beauty,<br> 2557 Studen(BE),<br> Grabenstrasse 12<br></span>
+                            </li>
+                            <li><a href="#"><span class="icon icon-phone"></span><span
+                                    class="text">+41 78 025 01 71</span></a></li>
+                            <li><a href="#"><span class="icon icon-envelope"></span><span class="text">vlora_aziri@hotmail.com</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                    All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a
+                            href="https://colorlib.com" target="_blank">Colorlib</a>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- loader -->
+<div id="ftco-loader" class="show fullscreen">
+    <svg class="circular" width="48px" height="48px">
+        <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+        <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+                stroke="#F96D00"/>
+    </svg>
+</div>
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery-migrate-3.0.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/jquery.waypoints.min.js"></script>
+<script src="js/jquery.stellar.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/aos.js"></script>
+<script src="js/jquery.animateNumber.min.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/jquery.timepicker.min.js"></script>
+<script src="js/scrollax.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+<script src="js/google-map.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
